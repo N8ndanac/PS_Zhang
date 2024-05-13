@@ -31,6 +31,16 @@ for idx = 1:no_pix
     % Position in 2D image
     h = obj_h(idx);
     w = obj_w(idx);
+    if h < 2
+        h = 2;
+    elseif h > (im_h - 1)
+        h = im_h - 1;
+    end
+    if w < 2
+        w = 2;
+    elseif w > (im_w - 1)
+        w = im_w - 1;
+    end
     % Surface normal
     n_x = N(h, w, 1);
     n_y = N(h, w, 2);
@@ -74,9 +84,9 @@ u(failed_rows, :) = [];
 
 %------------------------ Solve
 
-z = (M.'*M)\(M.'*u);
-% z = qmr(M.'*M, M.'*u);
-% z = lsqr(M, u);
+%z = (M.'*M)\(M.'*u);
+%z = qmr(M.'*M, M.'*u);
+z = lsqr(M, u);
 
 % From sparse back to full matrix
 z = full(z);

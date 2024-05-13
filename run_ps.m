@@ -9,10 +9,14 @@ clc;
 
 addpath(genpath('./psmImages/'));
 
-IMAGE = 'horse';
+IMAGE = 'ring';
+
+% Scale images later to save time
+scale = 0.3;
 
 % Read in mask
-mask = tga_read_image([IMAGE '.mask.tga']);
+mask = imread([IMAGE '.mask2.png']);
+mask = imresize(mask, scale);
 mask = rgb2gray(mask);
 
 %------------------------ Get light directions, L
@@ -24,9 +28,10 @@ L = [s{1} s{2} s{3}];
 
 %------------------------ Get images, I (same order as L)
 
-I = cell(12, 1);
+I = cell(8, 1);
 for idx = 1:size(I, 1)
-    im = tga_read_image([IMAGE '.' num2str(idx-1) '.tga']);
+    im = imread([IMAGE '.' num2str(idx) '.png']);
+    im = imresize(im, scale);
     I{idx} = im;
 end
 
@@ -36,7 +41,7 @@ N = compute_surfNorm(I, L, mask);
 % Visualization
 imwrite(N, sprintf('./results/%s_norm1.png', IMAGE));
 h = show_surfNorm(N, 4);
-saveas(h, sprintf('./results/%s_norm2.png', IMAGE));
+%saveas(h, sprintf('./results/%s_norm2.png', IMAGE));
 
 %========================= HEIGHT MAP =========================%
 
@@ -45,3 +50,4 @@ Z = compute_heightMap(N, mask);
 figure;
 imshow(uint8(Z));
 imwrite(uint8(Z), sprintf('./results/%s_height.png', IMAGE));
+plot_depthMap('./results/', Z)
